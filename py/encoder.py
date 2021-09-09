@@ -20,14 +20,15 @@ class Encoder(nn.Module):
     def __init__(self, res_block_num = 3):
         super().__init__()
         self.conv_down = nn.Sequential(
-            *makeConv(3, 64, 3, 1, 1),
+            *makeConv(3, 64, 3, 1, 1, False),
+            *makeConv(64, 128, 3, 1, 1),
         )
         # simple n block resnet 
         self.small_res = nn.ModuleList([])
         for i in range(res_block_num):
-            self.small_res.append(nn.Sequential(*makeConv(64, 64, 3, 1, 1)))
-            self.small_res.append(nn.Sequential(*makeConv(64, 64, 3, 1, 1, False)))
-        self.conv_up = nn.Conv2d(64, 16, 3, 1, 1)
+            self.small_res.append(nn.Sequential(*makeConv(128, 128, 3, 1, 1)))
+            self.small_res.append(nn.Sequential(*makeConv(128, 128, 3, 1, 1, False)))
+        self.conv_up = nn.Conv2d(128, 32, 3, 1, 1)
         self.res_block_num = 2 * res_block_num
 
     def forward(self, x):
